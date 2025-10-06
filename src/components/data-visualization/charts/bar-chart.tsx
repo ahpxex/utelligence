@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/shadcn/card";
 import type { ChartConfig } from "@/types/chart-types";
 import { AlertTriangle } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, type FC } from "react";
 import BaseEChart from "./base-echart";
 import type { EChartsCoreOption } from "echarts";
 
@@ -35,25 +35,25 @@ const BarChartComponent: FC<BarChartComponentProps> = ({ chartConfig }) => {
 	const description = `X: ${xAxisColumn || "N/A"}, Y: ${yAxisColumn || "N/A"} (${layout === "stacked" ? "Stacked" : "Simple"} Count)`;
 
 	const option = useMemo<EChartsCoreOption>(() => {
-		const xCategories = processedData.map((item) => String(item[categoryDataKey] ?? ""));
+		const xCategories = processedData.map((item: Record<string, unknown>) => String(item[categoryDataKey] ?? ""));
 
 		const series =
 			layout === "stacked"
-				? yCategories.map((category, index) => ({
+				? yCategories.map((category: string, index: number) => ({
 					name: category,
-					type: "bar",
+					type: "bar" as const,
 					stack: "total",
-					emphasis: { focus: "series" },
+					emphasis: { focus: "series" as const },
 					itemStyle: { color: getChartColor(index) },
-					data: processedData.map((row) => Number(row[category] ?? 0)),
+					data: processedData.map((row: Record<string, unknown>) => Number(row[category] ?? 0)),
 				}))
 				: [
 					{
 						name: yAxisColumn || yKey,
-						type: "bar",
+						type: "bar" as const,
 						itemStyle: { color: getChartColor(0) },
-						data: processedData.map((row) => Number(row[yKey] ?? 0)),
-						emphasis: { focus: "series" },
+						data: processedData.map((row: Record<string, unknown>) => Number(row[yKey] ?? 0)),
+						emphasis: { focus: "series" as const },
 					},
 				];
 

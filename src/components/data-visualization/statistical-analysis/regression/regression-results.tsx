@@ -45,7 +45,16 @@ export function RegressionResults({
 			return null;
 		}
 
-		const series: EChartsCoreOption["series"] = [
+		const series: Array<{
+			name: string;
+			type: "scatter" | "line";
+			symbolSize?: number;
+			smooth?: boolean;
+			showSymbol?: boolean;
+			lineStyle?: { color: string; width: number };
+			itemStyle: { color: string };
+			data: number[][];
+		}> = [
 			{
 				name: "观测值",
 				type: "scatter",
@@ -70,12 +79,12 @@ export function RegressionResults({
 		return {
 			tooltip: {
 				trigger: "item",
-				formatter: (params: any) => {
-					const [x, y] = params.value as [number, number];
+				formatter: (params: { value: [number, number] }) => {
+					const [x, y] = params.value;
 					return `${independentVar}: ${x}<br/>${dependentVar}: ${y}`;
 				},
 			},
-			legend: { data: series.map((s: any) => s.name), top: 0 },
+			legend: { data: series.map((s) => s.name), top: 0 },
 			grid: { left: 56, right: 24, top: 48, bottom: 56 },
 			xAxis: {
 				name: independentVar,

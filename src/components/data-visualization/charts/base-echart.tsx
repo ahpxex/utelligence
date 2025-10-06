@@ -18,7 +18,6 @@ export interface BaseEChartProps {
 	style?: CSSProperties;
 	theme?: "light" | "dark";
 	showLoading?: boolean;
-	locale?: string;
 	onChartReady?: EChartsReactProps["onChartReady"];
 	opts?: EChartsReactProps["opts"];
 }
@@ -31,7 +30,6 @@ const BaseEChart: FC<BaseEChartProps> = ({
 	style,
 	theme,
 	showLoading = false,
-	locale,
 	onChartReady,
 	opts,
 }) => (
@@ -43,7 +41,6 @@ const BaseEChart: FC<BaseEChartProps> = ({
 		className={className}
 		style={{ ...DEFAULT_STYLE, ...style }}
 		theme={theme}
-		locale={locale}
 		onChartReady={onChartReady}
 		opts={opts}
 	/>
