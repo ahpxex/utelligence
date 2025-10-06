@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/shadcn/badge";
 import { Button } from "@/components/ui/shadcn/button";
 import {
 	DropdownMenu,
@@ -10,7 +11,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/shadcn/dropdown-menu";
 import { useUnifiedDataStore } from "@/store/unified-data-store";
-import { Cross2Icon, FileIcon } from "@radix-ui/react-icons";
+import { ChevronDownIcon, Cross2Icon, FileTextIcon } from "@radix-ui/react-icons";
 import React from "react";
 
 export default function ProfileSwitcher() {
@@ -42,53 +43,72 @@ export default function ProfileSwitcher() {
 	};
 
 	return (
-		<div className="flex items-center gap-2">
-			<DropdownMenu>
-				<DropdownMenuTrigger asChild>
-					<Button variant="outline" className="flex items-center gap-2">
-						<FileIcon className="w-4 h-4" />
-						<span className="max-w-[200px] truncate">
-							{activeProfile ? activeProfile.fileName : "选择文件"}
-						</span>
-						{profiles.length > 1 && (
-							<span className="ml-1 text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">
-								{profiles.length}
-							</span>
-						)}
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent align="start" className="w-64">
-					<DropdownMenuLabel>已上传文件</DropdownMenuLabel>
-					<DropdownMenuSeparator />
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant="ghost" size="sm" className="h-8 gap-2 font-normal">
+					<FileTextIcon className="h-4 w-4" />
+					<span className="max-w-[150px] truncate">
+						{activeProfile ? activeProfile.fileName : "选择文件"}
+					</span>
+					{profiles.length > 1 && (
+						<Badge variant="secondary" className="h-5 px-1.5 text-xs">
+							{profiles.length}
+						</Badge>
+					)}
+					<ChevronDownIcon className="h-3 w-3 opacity-50" />
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align="start" className="w-72">
+				<DropdownMenuLabel className="text-xs font-medium text-muted-foreground">
+					已上传文件
+				</DropdownMenuLabel>
+				<DropdownMenuSeparator />
+				<div className="max-h-[300px] overflow-y-auto">
 					{profiles.map((profile) => (
 						<DropdownMenuItem
 							key={profile.id}
-							className={`flex items-center justify-between cursor-pointer ${
-								profile.id === activeProfileId ? "bg-accent" : ""
-							}`}
+							className="flex items-center justify-between gap-2 py-2.5"
 							onClick={() => switchProfile(profile.id)}
 						>
 							<div className="flex items-center gap-2 flex-1 min-w-0">
-								<FileIcon className="w-4 h-4 flex-shrink-0" />
+								<FileTextIcon className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
 								<div className="flex-1 min-w-0">
-									<p className="text-sm font-medium truncate">{profile.fileName}</p>
+									<p
+										className={`text-sm truncate ${
+											profile.id === activeProfileId ? "font-semibold" : "font-normal"
+										}`}
+									>
+										{profile.fileName}
+									</p>
 									<p className="text-xs text-muted-foreground">
-										{new Date(profile.createdAt).toLocaleString("zh-CN")}
+										{new Date(profile.createdAt).toLocaleString("zh-CN", {
+											month: "short",
+											day: "numeric",
+											hour: "2-digit",
+											minute: "2-digit",
+										})}
 									</p>
 								</div>
 							</div>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground ml-2"
-								onClick={(e) => handleDeleteProfile(e, profile.id)}
-							>
-								<Cross2Icon className="w-3 h-3" />
-							</Button>
+							<div className="flex items-center gap-1">
+								{profile.id === activeProfileId && (
+									<Badge variant="default" className="h-5 px-1.5 text-xs">
+										当前
+									</Badge>
+								)}
+								<Button
+									variant="ghost"
+									size="icon"
+									className="h-6 w-6"
+									onClick={(e) => handleDeleteProfile(e, profile.id)}
+								>
+									<Cross2Icon className="h-3 w-3" />
+								</Button>
+							</div>
 						</DropdownMenuItem>
 					))}
-				</DropdownMenuContent>
-			</DropdownMenu>
-		</div>
+				</div>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
