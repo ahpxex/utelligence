@@ -47,26 +47,14 @@ interface OutliersStatistics {
 	methodDetails: OutliersMethodDetails;
 }
 
-/**
- * Unified Data Store Interface
- * Consolidates all data-related state management
- */
-interface UnifiedDataState {
-	// File Management
-	currentFile: File | null;
-	currentFileIdentifier: string | null;
-
-	// Data States
+interface FileProfile {
+	id: string;
+	file: File | null;
+	fileIdentifier: string | null;
 	rawData: ParsedData | null;
 	processedData: { headers: string[]; rows: FileData } | null;
 	cleanedData: { headers: string[]; rows: any[] } | null;
 	columnAnalysis: ColumnVisualizableConfig[];
-
-	// Loading & Error States
-	isLoading: boolean;
-	error: string | null;
-
-	// Duplicates Analysis
 	duplicates: {
 		selectedColumns: string[];
 		groups: DuplicateGroup[];
@@ -74,8 +62,44 @@ interface UnifiedDataState {
 		activeTab: string;
 		expandedGroup: string | null;
 	};
+	outliers: {
+		columnName: string;
+		method: string;
+		threshold: number;
+		statistics: OutliersStatistics;
+		activeTab: string;
+		chartData: any[];
+	};
+	createdAt: number;
+}
 
-	// Outliers Analysis
+/**
+ * Unified Data Store Interface
+ * Consolidates all data-related state management with multi-file profile support
+ */
+interface UnifiedDataState {
+	// Profile Management
+	profiles: Map<string, FileProfile>;
+	activeProfileId: string | null;
+
+	// Loading & Error States
+	isLoading: boolean;
+	error: string | null;
+
+	// Computed getters (for backward compatibility)
+	currentFile: File | null;
+	currentFileIdentifier: string | null;
+	rawData: ParsedData | null;
+	processedData: { headers: string[]; rows: FileData } | null;
+	cleanedData: { headers: string[]; rows: any[] } | null;
+	columnAnalysis: ColumnVisualizableConfig[];
+	duplicates: {
+		selectedColumns: string[];
+		groups: DuplicateGroup[];
+		statistics: DuplicatesStatistics;
+		activeTab: string;
+		expandedGroup: string | null;
+	};
 	outliers: {
 		columnName: string;
 		method: string;
@@ -85,7 +109,13 @@ interface UnifiedDataState {
 		chartData: any[];
 	};
 
-	// Actions - File Management
+	// Actions - Profile Management
+	createProfile: (file: File) => Promise<string>;
+	switchProfile: (profileId: string) => void;
+	deleteProfile: (profileId: string) => void;
+	getProfileList: () => Array<{ id: string; fileName: string; createdAt: number }>;
+
+	// Actions - File Management (updated for profile support)
 	uploadFile: (file: File) => Promise<void>;
 	clearFile: () => void;
 
@@ -120,80 +150,216 @@ interface UnifiedDataState {
  * Unified Data Store
  * Single source of truth for all data operations
  */
+const createDefaultProfile = (id: string, file: File | null = null): FileProfile => ({
+	id,
+	file,
+	fileIdentifier: file ? `${file.name}-${file.size}` : null,
+	rawData: null,
+	processedData: null,
+	cleanedData: null,
+	columnAnalysis: [],
+	duplicates: {
+		selectedColumns: [],
+		groups: [],
+		statistics: {
+			totalRows: 0,
+			uniqueRows: 0,
+			duplicateRows: 0,
+			duplicateGroupsCount: 0,
+			duplicateCount: 0,
+		},
+		activeTab: "summary",
+		expandedGroup: null,
+	},
+	outliers: {
+		columnName: "",
+		method: "zscore",
+		threshold: 3,
+		statistics: {
+			lowerBound: 0,
+			upperBound: 0,
+			method: "zscore",
+			threshold: 3,
+			outlierCount: 0,
+			totalCount: 0,
+			methodDetails: {},
+		},
+		activeTab: "chart",
+		chartData: [],
+	},
+	createdAt: Date.now(),
+});
+
 export const useUnifiedDataStore = create<UnifiedDataState>()(
 	persist(
 		(set, get) => ({
 			// Initial State
+			profiles: new Map(),
+			activeProfileId: null,
+			isLoading: false,
+			error: null,
+
+			// Derived state (stored as regular properties, updated when profiles change)
 			currentFile: null,
 			currentFileIdentifier: null,
 			rawData: null,
 			processedData: null,
 			cleanedData: null,
 			columnAnalysis: [],
-			isLoading: false,
-			error: null,
+			duplicates: createDefaultProfile("").duplicates,
+			outliers: createDefaultProfile("").outliers,
 
-			duplicates: {
-				selectedColumns: [],
-				groups: [],
-				statistics: {
-					totalRows: 0,
-					uniqueRows: 0,
-					duplicateRows: 0,
-					duplicateGroupsCount: 0,
-					duplicateCount: 0,
-				},
-				activeTab: "summary",
-				expandedGroup: null,
+			// Profile Management Actions
+			createProfile: async (file) => {
+				const profileId = `${file.name}-${file.size}-${Date.now()}`;
+				const newProfile = createDefaultProfile(profileId, file);
+
+				set((state) => {
+					const newProfiles = new Map(state.profiles);
+					newProfiles.set(profileId, newProfile);
+					return {
+						profiles: newProfiles,
+						activeProfileId: profileId,
+						// Sync derived state
+						currentFile: newProfile.file,
+						currentFileIdentifier: newProfile.fileIdentifier,
+						rawData: newProfile.rawData,
+						processedData: newProfile.processedData,
+						cleanedData: newProfile.cleanedData,
+						columnAnalysis: newProfile.columnAnalysis,
+						duplicates: newProfile.duplicates,
+						outliers: newProfile.outliers,
+					};
+				});
+
+				return profileId;
 			},
 
-			outliers: {
-				columnName: "",
-				method: "zscore",
-				threshold: 3,
-				statistics: {
-					lowerBound: 0,
-					upperBound: 0,
-					method: "zscore",
-					threshold: 3,
-					outlierCount: 0,
-					totalCount: 0,
-					methodDetails: {},
-				},
-				activeTab: "chart",
-				chartData: [],
+			switchProfile: (profileId) => {
+				const { profiles } = get();
+				const profile = profiles.get(profileId);
+				if (profile) {
+					set({
+						activeProfileId: profileId,
+						// Sync derived state
+						currentFile: profile.file,
+						currentFileIdentifier: profile.fileIdentifier,
+						rawData: profile.rawData,
+						processedData: profile.processedData,
+						cleanedData: profile.cleanedData,
+						columnAnalysis: profile.columnAnalysis,
+						duplicates: profile.duplicates,
+						outliers: profile.outliers,
+					});
+					if (profile.fileIdentifier) {
+						visualizationChartStore.getState().setCurrentFileIdentifier(profile.fileIdentifier);
+					}
+				}
+			},
+
+			deleteProfile: (profileId) => {
+				set((state) => {
+					const newProfiles = new Map(state.profiles);
+					newProfiles.delete(profileId);
+
+					let newActiveProfileId = state.activeProfileId;
+					let updatedState: any = {
+						profiles: newProfiles,
+					};
+
+					if (state.activeProfileId === profileId) {
+						const remainingProfiles = Array.from(newProfiles.keys());
+						newActiveProfileId = remainingProfiles.length > 0 ? remainingProfiles[0] : null;
+
+						updatedState.activeProfileId = newActiveProfileId;
+
+						// Sync derived state with new active profile
+						if (newActiveProfileId) {
+							const newActiveProfile = newProfiles.get(newActiveProfileId);
+							if (newActiveProfile) {
+								updatedState = {
+									...updatedState,
+									currentFile: newActiveProfile.file,
+									currentFileIdentifier: newActiveProfile.fileIdentifier,
+									rawData: newActiveProfile.rawData,
+									processedData: newActiveProfile.processedData,
+									cleanedData: newActiveProfile.cleanedData,
+									columnAnalysis: newActiveProfile.columnAnalysis,
+									duplicates: newActiveProfile.duplicates,
+									outliers: newActiveProfile.outliers,
+								};
+							}
+						} else {
+							// No profiles left, reset to defaults
+							const defaultProfile = createDefaultProfile("");
+							updatedState = {
+								...updatedState,
+								currentFile: null,
+								currentFileIdentifier: null,
+								rawData: null,
+								processedData: null,
+								cleanedData: null,
+								columnAnalysis: [],
+								duplicates: defaultProfile.duplicates,
+								outliers: defaultProfile.outliers,
+							};
+						}
+					}
+
+					return updatedState;
+				});
+			},
+
+			getProfileList: () => {
+				const { profiles } = get();
+				return Array.from(profiles.values()).map(profile => ({
+					id: profile.id,
+					fileName: profile.file?.name ?? "Unknown",
+					createdAt: profile.createdAt,
+				}));
 			},
 
 			// File Management Actions
 			uploadFile: async (file) => {
+				const { profiles, activeProfileId } = get();
 				const fileKey = `${file.name}-${file.size}`;
-				const { currentFileIdentifier, rawData, processedData } = get();
 
-				// Avoid reprocessing the same file only if we already have data loaded
-				if (fileKey === currentFileIdentifier && (rawData || processedData)) {
+				// Check if profile already exists for this file
+				let profileId = activeProfileId;
+				const existingProfile = Array.from(profiles.values()).find(
+					p => p.fileIdentifier === fileKey
+				);
+
+				if (existingProfile) {
+					// Switch to existing profile instead of re-uploading
+					get().switchProfile(existingProfile.id);
 					return;
 				}
 
-				set({
-					isLoading: true,
-					error: null,
-					currentFile: file,
-					currentFileIdentifier: fileKey,
-					columnAnalysis: [],
-					// Reset derived data when (re)uploading
-					processedData: null,
-					cleanedData: null,
-				});
+				// Create new profile for the file
+				profileId = await get().createProfile(file);
+
+				set({ isLoading: true, error: null });
 
 				visualizationChartStore.getState().setCurrentFileIdentifier(fileKey);
 
 				try {
 					const result = await processFile(file);
-					set({
-						rawData: result,
-						isLoading: false,
+
+					// Update the active profile with parsed data
+					set((state) => {
+						const newProfiles = new Map(state.profiles);
+						const currentProfile = newProfiles.get(profileId);
+						if (currentProfile) {
+							currentProfile.rawData = result;
+						}
+						return {
+							profiles: newProfiles,
+							isLoading: false,
+							// Sync derived state
+							rawData: result,
+						};
 					});
-					// Don't set visualization chart store data here - let processAndAnalyze handle it
 
 					// Sync with backend if needed
 					await fetch("/api/data/upload", {
@@ -207,28 +373,24 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 					set({
 						error: `File processing error: ${err instanceof Error ? err.message : String(err)}`,
 						isLoading: false,
-						rawData: null,
 					});
 				}
 			},
 
 			clearFile: () => {
+				const { activeProfileId } = get();
+				if (activeProfileId) {
+					get().deleteProfile(activeProfileId);
+				}
 				visualizationChartStore.getState().resetCurrentFile();
-				set({
-					currentFile: null,
-					currentFileIdentifier: null,
-					rawData: null,
-					processedData: null,
-					cleanedData: null,
-					error: null,
-					columnAnalysis: [],
-				});
 			},
 
 			// Data Processing Actions
 			processAndAnalyze: async (columnsToAnalyze) => {
-				const { currentFile } = get();
-				if (!currentFile) {
+				const { profiles, activeProfileId } = get();
+				const currentProfile = activeProfileId ? profiles.get(activeProfileId) : null;
+
+				if (!currentProfile?.file) {
 					set({ error: "No file loaded" });
 					return;
 				}
@@ -237,17 +399,28 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 
 				try {
 					const { rawData, columnsVisualizableStatus } = await processAndAnalyzeFileData(
-						currentFile,
+						currentProfile.file,
 						columnsToAnalyze
 					);
 
-					set({
-						processedData: rawData,
-						columnAnalysis: columnsVisualizableStatus,
-						isLoading: false,
+					// Update active profile
+					set((state) => {
+						const newProfiles = new Map(state.profiles);
+						const profile = newProfiles.get(activeProfileId!);
+						if (profile) {
+							profile.processedData = rawData;
+							profile.columnAnalysis = columnsVisualizableStatus;
+						}
+						return {
+							profiles: newProfiles,
+							isLoading: false,
+							// Sync derived state
+							processedData: rawData,
+							columnAnalysis: columnsVisualizableStatus,
+						};
 					});
 
-					const fileIdentifier = get().currentFileIdentifier;
+					const fileIdentifier = currentProfile.fileIdentifier;
 					if (fileIdentifier) {
 						visualizationChartStore.getState().initializeFileContext({
 							identifier: fileIdentifier,
@@ -259,7 +432,6 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 					set({
 						error: error.message || "Processing failed",
 						isLoading: false,
-						columnAnalysis: [],
 					});
 					visualizationChartStore.getState().setColumnsVisualizableStatus([]);
 				}
@@ -506,9 +678,21 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 
 			// Duplicates Actions
 			setDuplicatesColumns: (columns) => {
-				set((state) => ({
-					duplicates: { ...state.duplicates, selectedColumns: columns },
-				}));
+				const { profiles, activeProfileId } = get();
+				if (!activeProfileId) return;
+
+				set((state) => {
+					const newProfiles = new Map(state.profiles);
+					const profile = newProfiles.get(activeProfileId);
+					if (profile) {
+						profile.duplicates = { ...profile.duplicates, selectedColumns: columns };
+					}
+					return {
+						profiles: newProfiles,
+						// Sync derived state
+						duplicates: profile ? profile.duplicates : state.duplicates,
+					};
+				});
 			},
 
 			analyzeDuplicates: () => {
@@ -523,31 +707,68 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 			},
 
 			removeDuplicates: (indices) => {
-				const { cleanedData, processedData } = get();
-				const data = cleanedData || processedData;
+				const { profiles, activeProfileId } = get();
+				const currentProfile = activeProfileId ? profiles.get(activeProfileId) : null;
+				if (!currentProfile) return;
 
+				const data = currentProfile.cleanedData || currentProfile.processedData;
 				if (!data) return;
 
 				const newRows = data.rows.filter((_, index) => !indices.includes(index));
-				set({
-					cleanedData: {
-						headers: data.headers,
-						rows: newRows,
-					},
+				const newCleanedData = {
+					headers: data.headers,
+					rows: newRows,
+				};
+
+				set((state) => {
+					const newProfiles = new Map(state.profiles);
+					const profile = newProfiles.get(activeProfileId!);
+					if (profile) {
+						profile.cleanedData = newCleanedData;
+					}
+					return {
+						profiles: newProfiles,
+						// Sync derived state
+						cleanedData: newCleanedData,
+					};
 				});
 			},
 
 			// Outliers Actions
 			setOutliersColumn: (column) => {
-				set((state) => ({
-					outliers: { ...state.outliers, columnName: column },
-				}));
+				const { profiles, activeProfileId } = get();
+				if (!activeProfileId) return;
+
+				set((state) => {
+					const newProfiles = new Map(state.profiles);
+					const profile = newProfiles.get(activeProfileId);
+					if (profile) {
+						profile.outliers = { ...profile.outliers, columnName: column };
+					}
+					return {
+						profiles: newProfiles,
+						// Sync derived state
+						outliers: profile ? profile.outliers : state.outliers,
+					};
+				});
 			},
 
 			setOutliersMethod: (method, threshold) => {
-				set((state) => ({
-					outliers: { ...state.outliers, method, threshold },
-				}));
+				const { profiles, activeProfileId } = get();
+				if (!activeProfileId) return;
+
+				set((state) => {
+					const newProfiles = new Map(state.profiles);
+					const profile = newProfiles.get(activeProfileId);
+					if (profile) {
+						profile.outliers = { ...profile.outliers, method, threshold };
+					}
+					return {
+						profiles: newProfiles,
+						// Sync derived state
+						outliers: profile ? profile.outliers : state.outliers,
+					};
+				});
 			},
 
 			analyzeOutliers: () => {
@@ -562,46 +783,90 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 			},
 
 			removeOutliers: (indices) => {
-				const { cleanedData, processedData } = get();
-				const data = cleanedData || processedData;
+				const { profiles, activeProfileId } = get();
+				const currentProfile = activeProfileId ? profiles.get(activeProfileId) : null;
+				if (!currentProfile) return;
 
+				const data = currentProfile.cleanedData || currentProfile.processedData;
 				if (!data) return;
 
 				const newRows = data.rows.filter((_, index) => !indices.includes(index));
-				set({
-					cleanedData: {
-						headers: data.headers,
-						rows: newRows,
-					},
+				const newCleanedData = {
+					headers: data.headers,
+					rows: newRows,
+				};
+
+				set((state) => {
+					const newProfiles = new Map(state.profiles);
+					const profile = newProfiles.get(activeProfileId!);
+					if (profile) {
+						profile.cleanedData = newCleanedData;
+					}
+					return {
+						profiles: newProfiles,
+						// Sync derived state
+						cleanedData: newCleanedData,
+					};
 				});
 			},
 
 			// UI State Actions
 			setActiveTab: (section, tab) => {
-				if (section === "duplicates") {
-					set((state) => ({
-						duplicates: { ...state.duplicates, activeTab: tab },
-					}));
-				} else if (section === "outliers") {
-					set((state) => ({
-						outliers: { ...state.outliers, activeTab: tab },
-					}));
-				}
+				const { profiles, activeProfileId } = get();
+				if (!activeProfileId) return;
+
+				set((state) => {
+					const newProfiles = new Map(state.profiles);
+					const profile = newProfiles.get(activeProfileId);
+					if (profile) {
+						if (section === "duplicates") {
+							profile.duplicates = { ...profile.duplicates, activeTab: tab };
+						} else if (section === "outliers") {
+							profile.outliers = { ...profile.outliers, activeTab: tab };
+						}
+					}
+					return {
+						profiles: newProfiles,
+						// Sync derived state
+						duplicates: profile ? profile.duplicates : state.duplicates,
+						outliers: profile ? profile.outliers : state.outliers,
+					};
+				});
 			},
 
 			setExpandedGroup: (groupId) => {
-				set((state) => ({
-					duplicates: { ...state.duplicates, expandedGroup: groupId },
-				}));
+				const { profiles, activeProfileId } = get();
+				if (!activeProfileId) return;
+
+				set((state) => {
+					const newProfiles = new Map(state.profiles);
+					const profile = newProfiles.get(activeProfileId);
+					if (profile) {
+						profile.duplicates = { ...profile.duplicates, expandedGroup: groupId };
+					}
+					return {
+						profiles: newProfiles,
+						// Sync derived state
+						duplicates: profile ? profile.duplicates : state.duplicates,
+					};
+				});
 			},
 		}),
 		{
 			name: "unified-data-storage",
 			storage: createJSONStorage(() => localStorage),
 			partialize: (state) => ({
-				currentFileIdentifier: state.currentFileIdentifier,
-				// Only persist essential data
+				activeProfileId: state.activeProfileId,
+				profiles: Array.from(state.profiles.entries()),
 			}),
+			merge: (persistedState: any, currentState) => {
+				const profiles = new Map(persistedState?.profiles || []);
+				return {
+					...currentState,
+					...persistedState,
+					profiles,
+				};
+			},
 		}
 	)
 );;

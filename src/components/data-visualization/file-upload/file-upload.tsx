@@ -50,12 +50,14 @@ export default function FileUpload({ onFileChange }: FileUploadProps) {
 		setIsDragging(false);
 
 		if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-			const uploadedFile = e.dataTransfer.files[0];
+			const files = Array.from(e.dataTransfer.files);
 
-			if (validateFile(uploadedFile)) {
-				setFile(uploadedFile);
-				if (onFileChange) {
-					onFileChange(uploadedFile);
+			for (const uploadedFile of files) {
+				if (validateFile(uploadedFile)) {
+					setFile(uploadedFile);
+					if (onFileChange) {
+						onFileChange(uploadedFile);
+					}
 				}
 			}
 		}
@@ -63,12 +65,14 @@ export default function FileUpload({ onFileChange }: FileUploadProps) {
 
 	const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files && e.target.files.length > 0) {
-			const uploadedFile = e.target.files[0];
+			const files = Array.from(e.target.files);
 
-			if (validateFile(uploadedFile)) {
-				setFile(uploadedFile);
-				if (onFileChange) {
-					onFileChange(uploadedFile);
+			for (const uploadedFile of files) {
+				if (validateFile(uploadedFile)) {
+					setFile(uploadedFile);
+					if (onFileChange) {
+						onFileChange(uploadedFile);
+					}
 				}
 			}
 		}
@@ -106,6 +110,7 @@ export default function FileUpload({ onFileChange }: FileUploadProps) {
 					className="hidden"
 					onChange={handleFileInputChange}
 					accept={supportedFileTypes.map((type) => `.${type.extension}`).join(",")}
+					multiple
 				/>
 
 				<label
