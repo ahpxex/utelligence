@@ -48,7 +48,7 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 		setIsRunning(false);
 	};
 
-	if (!file) {
+	if (availableColumns.length === 0) {
 		return (
 			<div className="flex items-center justify-center h-64">
 				<p className="text-gray-500 dark:text-gray-400">请先上传数据文件</p>

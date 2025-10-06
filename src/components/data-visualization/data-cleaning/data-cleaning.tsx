@@ -28,7 +28,7 @@ export default function DataCleaning({ file }: DataCleaningProps) {
 	const { toast } = useToast();
 
 	// Get data from unified store
-	const { rawData: parsedData, processAndAnalyze, cleanedData } = useUnifiedDataStore();
+	const { rawData: parsedData, processAndAnalyze, cleanedData, activeProfileId } = useUnifiedDataStore();
 
 	// Get all available columns
 	const availableColumns = parsedData?.headers || [];
@@ -143,7 +143,7 @@ export default function DataCleaning({ file }: DataCleaningProps) {
 		},
 	};
 
-	if (!file) {
+	if (!activeProfileId) {
 		return (
 			<div className="flex items-center justify-center h-full">
 				<p className="text-gray-500 dark:text-gray-400">请先上传文件</p>

@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import AddChartModal from "../ui/data/add-chart-modal";
 import { Badge } from "../ui/shadcn/badge";
 import ChartRenderer from "./charts/chart-renderer";
-
 /**
  * 数据可视化显示组件
  * 负责处理数据文件(CSV/Excel)并显示可视化图表
@@ -22,10 +21,10 @@ export default function DataDisplay() {
 		rawData,
 		processedData: parsedData,
 		currentFileIdentifier,
+		activeProfileId,
 		isLoading: isFileLoading,
 		error: fileError,
 		processAndAnalyze,
-		clearFile
 	} = useUnifiedDataStore();
 
 	// Get visualization chart state - using individual selectors to avoid infinite loop
@@ -43,22 +42,24 @@ export default function DataDisplay() {
 
 	// Simplified useEffect to trigger file processing via store action
 	useEffect(() => {
-		if (!file) {
-			clearFile();
+		// Don't clear if we have a profile (even if file is null after refresh)
+		if (!activeProfileId) {
 			return;
 		}
 
 		// Check if we have rawData and haven't processed it yet
+		// processAndAnalyze will skip if data is already processed
 		if (rawData && rawData.headers && !parsedData) {
-			processAndAnalyze(rawData.headers);
+			processAndAnalyze(rawData.headers).catch((error) => {
+				console.error("Error processing data:", error);
+			});
 		}
 	}, [
-		file,
+		activeProfileId,
 		rawData,
 		parsedData,
 		currentFileIdentifier,
 		processAndAnalyze,
-		clearFile,
 	]);
 
 	// Get columnsVisualizableStatus for validation
@@ -108,7 +109,7 @@ export default function DataDisplay() {
 		availableColumns.length > 0 ? availableColumns : parsedData?.headers || [];
 
 	// Render loading and error states based on store state
-	if (!file) {
+	if (!activeProfileId) {
 		return (
 			<div className="flex items-center justify-center h-full">
 				<p className="text-gray-500 dark:text-gray-400">请先上传文件</p>

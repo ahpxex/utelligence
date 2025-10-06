@@ -414,8 +414,28 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 				const { profiles, activeProfileId } = get();
 				const currentProfile = activeProfileId ? profiles.get(activeProfileId) : null;
 
-				if (!currentProfile?.file) {
-					set({ error: "No file loaded" });
+				if (!currentProfile) {
+					set({ error: "No profile selected" });
+					return;
+				}
+
+				// If we already have processed data, don't reprocess
+				if (currentProfile.rawData && currentProfile.processedData) {
+					// But ensure visualization store is initialized
+					const fileIdentifier = currentProfile.fileIdentifier;
+					if (fileIdentifier && currentProfile.processedData.headers && currentProfile.columnAnalysis) {
+						visualizationChartStore.getState().initializeFileContext({
+							identifier: fileIdentifier,
+							columns: currentProfile.processedData.headers,
+							columnStatus: currentProfile.columnAnalysis,
+						});
+					}
+					return;
+				}
+
+				// If we don't have a file object and don't have data, we can't process
+				if (!currentProfile.file) {
+					// Silently return - this is expected after refresh
 					return;
 				}
 
@@ -897,6 +917,20 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 				const profiles = new Map<string, FileProfile>(persistedState.profiles);
 				const activeProfileId = persistedState.activeProfileId;
 				const activeProfile: FileProfile | undefined = activeProfileId ? profiles.get(activeProfileId) : undefined;
+
+				// Initialize visualization store if we have data
+				// Use processedData if available, otherwise fall back to rawData
+				const dataSource = activeProfile?.processedData || activeProfile?.rawData;
+				if (activeProfile?.fileIdentifier && dataSource?.headers) {
+					const columnStatus = activeProfile.columnAnalysis || [];
+					setTimeout(() => {
+						visualizationChartStore.getState().initializeFileContext({
+							identifier: activeProfile.fileIdentifier!,
+							columns: dataSource.headers,
+							columnStatus: columnStatus,
+						});
+					}, 0);
+				}
 
 				return {
 					...currentState,

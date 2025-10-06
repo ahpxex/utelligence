@@ -45,7 +45,7 @@ export default function DataAnalysis({ file }: DataAnalysisProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Get data from unified store
-  const { rawData: parsedData, processAndAnalyze } = useUnifiedDataStore();
+  const { rawData: parsedData, processAndAnalyze, activeProfileId } = useUnifiedDataStore();
 
   // Get all available columns
   const allColumns = parsedData?.headers || [];
@@ -161,7 +161,7 @@ export default function DataAnalysis({ file }: DataAnalysisProps) {
     }
   }, [allColumns, selectedColumn]);
 
-  if (!file) {
+  if (!activeProfileId) {
     return (
       <div className="flex items-center justify-center h-full">
         <p className="text-gray-500 dark:text-gray-400">请先上传文件</p>

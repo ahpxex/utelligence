@@ -18,7 +18,7 @@ import { RegressionResults } from "./regression/regression-results";
 import { RegressionTypeInformation } from "./regression/regression-type-information";
 
 interface RegressionTabProps {
-	file: File;
+	file: File | null;
 	availableColumns: string[];
 }
 
