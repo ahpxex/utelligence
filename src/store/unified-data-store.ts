@@ -51,6 +51,8 @@ interface FileProfile {
 	id: string;
 	file: File | null;
 	fileIdentifier: string | null;
+	fileName: string;
+	fileSize: number;
 	rawData: ParsedData | null;
 	processedData: { headers: string[]; rows: FileData } | null;
 	cleanedData: { headers: string[]; rows: any[] } | null;
@@ -118,6 +120,7 @@ interface UnifiedDataState {
 	// Actions - File Management (updated for profile support)
 	uploadFile: (file: File) => Promise<void>;
 	clearFile: () => void;
+	clearAllFiles: () => void;
 
 	// Actions - Data Processing
 	processAndAnalyze: (columnsToAnalyze: string[]) => Promise<void>;
@@ -150,10 +153,12 @@ interface UnifiedDataState {
  * Unified Data Store
  * Single source of truth for all data operations
  */
-const createDefaultProfile = (id: string, file: File | null = null): FileProfile => ({
+const createDefaultProfile = (id: string, file: File | null = null, fileName: string = "", fileSize: number = 0): FileProfile => ({
 	id,
 	file,
 	fileIdentifier: file ? `${file.name}-${file.size}` : null,
+	fileName: file?.name || fileName,
+	fileSize: file?.size || fileSize,
 	rawData: null,
 	processedData: null,
 	cleanedData: null,
@@ -382,6 +387,25 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 				if (activeProfileId) {
 					get().deleteProfile(activeProfileId);
 				}
+				visualizationChartStore.getState().resetCurrentFile();
+			},
+
+			clearAllFiles: () => {
+				const defaultProfile = createDefaultProfile("");
+				set({
+					profiles: new Map(),
+					activeProfileId: null,
+					currentFile: null,
+					currentFileIdentifier: null,
+					rawData: null,
+					processedData: null,
+					cleanedData: null,
+					columnAnalysis: [],
+					duplicates: defaultProfile.duplicates,
+					outliers: defaultProfile.outliers,
+					isLoading: false,
+					error: null,
+				});
 				visualizationChartStore.getState().resetCurrentFile();
 			},
 
@@ -857,14 +881,36 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 			storage: createJSONStorage(() => localStorage),
 			partialize: (state) => ({
 				activeProfileId: state.activeProfileId,
-				profiles: Array.from(state.profiles.entries()),
+				profiles: Array.from(state.profiles.entries()).map(([key, profile]) => [
+					key,
+					{
+						...profile,
+						file: null, // Don't persist File objects
+					},
+				]),
 			}),
-			merge: (persistedState: any, currentState) => {
-				const profiles = new Map(persistedState?.profiles || []);
+			merge: (persistedState: any, currentState: UnifiedDataState): UnifiedDataState => {
+				if (!persistedState?.profiles) {
+					return currentState;
+				}
+
+				const profiles = new Map<string, FileProfile>(persistedState.profiles);
+				const activeProfileId = persistedState.activeProfileId;
+				const activeProfile: FileProfile | undefined = activeProfileId ? profiles.get(activeProfileId) : undefined;
+
 				return {
 					...currentState,
-					...persistedState,
 					profiles,
+					activeProfileId,
+					// Sync derived state from active profile
+					currentFile: activeProfile?.file || null,
+					currentFileIdentifier: activeProfile?.fileIdentifier || null,
+					rawData: activeProfile?.rawData || null,
+					processedData: activeProfile?.processedData || null,
+					cleanedData: activeProfile?.cleanedData || null,
+					columnAnalysis: activeProfile?.columnAnalysis || [],
+					duplicates: activeProfile?.duplicates || currentState.duplicates,
+					outliers: activeProfile?.outliers || currentState.outliers,
 				};
 			},
 		}

@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/shadcn/button";
 import { Card, CardContent } from "@/components/ui/shadcn/card";
 import { Separator } from "@/components/ui/shadcn/separator";
 import { useUnifiedDataStore } from "@/store/unified-data-store";
-import { UploadIcon } from "@radix-ui/react-icons";
+import { TrashIcon, UploadIcon } from "@radix-ui/react-icons";
 
 export default function DataPanel() {
 	const currentFile = useUnifiedDataStore((state) => state.currentFile);
+	const activeProfileId = useUnifiedDataStore((state) => state.activeProfileId);
 	const uploadFile = useUnifiedDataStore((state) => state.uploadFile);
+	const clearAllFiles = useUnifiedDataStore((state) => state.clearAllFiles);
 
 	const handleFileChange = async (file: File) => {
 		await uploadFile(file);
@@ -23,9 +25,11 @@ export default function DataPanel() {
 		return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 	};
 
+	const hasProfile = activeProfileId !== null;
+
 	return (
 		<div className="flex flex-col w-full flex-1 h-full rounded-lg bg-white dark:bg-gray-800 overflow-y-auto">
-			{!currentFile ? (
+			{!hasProfile ? (
 				<div className="flex items-center justify-center h-full">
 					<FileUpload onFileChange={handleFileChange} />
 				</div>
@@ -38,6 +42,15 @@ export default function DataPanel() {
 									<ProfileSwitcher />
 								</div>
 								<div className="flex items-center gap-2">
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={clearAllFiles}
+										title="清空所有文件"
+									>
+										<TrashIcon className="w-4 h-4 mr-2" />
+										清空
+									</Button>
 									<label htmlFor="file-upload-header">
 										<Button variant="default" size="sm" className="cursor-pointer" asChild>
 											<span>

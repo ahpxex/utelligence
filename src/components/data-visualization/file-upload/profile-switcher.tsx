@@ -25,7 +25,7 @@ export default function ProfileSwitcher() {
 		() =>
 			Array.from(profilesMap.values()).map((profile) => ({
 				id: profile.id,
-				fileName: profile.file?.name ?? "Unknown",
+				fileName: profile.fileName || profile.file?.name || "Unknown",
 				createdAt: profile.createdAt,
 			})),
 		[profilesMap]

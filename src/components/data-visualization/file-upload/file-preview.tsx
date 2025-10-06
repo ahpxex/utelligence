@@ -4,9 +4,10 @@ import { useUnifiedDataStore } from "@/store/unified-data-store";
 
 export default function FilePreview() {
 	// Use unified data store
-	const { currentFile: file, rawData: parsedData, isLoading, error } = useUnifiedDataStore();
+	const { currentFile: file, rawData: parsedData, isLoading, error, activeProfileId } = useUnifiedDataStore();
 
-	if (!file) {
+	// Show upload message only if there's no profile at all
+	if (!activeProfileId) {
 		return (
 			<div className="flex items-center justify-center h-full">
 				<p className="text-gray-500 dark:text-gray-400">请先上传文件</p>

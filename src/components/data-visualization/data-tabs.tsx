@@ -15,20 +15,22 @@ interface DataTabsProps {
 export default function DataTabs({ file }: DataTabsProps) {
 	const [activeTab, setActiveTab] = useState("preview");
 	const { uploadFile } = useUnifiedDataStore();
+	const [lastUploadedFile, setLastUploadedFile] = useState<File | null>(null);
 
 	// Initialize file in the store when it changes
 	useEffect(() => {
-		if (file) {
+		if (file && file !== lastUploadedFile) {
 			uploadFile(file);
+			setLastUploadedFile(file);
 		}
-	}, [file, uploadFile]);
+	}, [file, uploadFile, lastUploadedFile]);
 
 	// 当文件变更时，重置到预览标签
 	useEffect(() => {
-		if (file) {
+		if (file && file !== lastUploadedFile) {
 			setActiveTab("preview");
 		}
-	}, [file]);
+	}, [file, lastUploadedFile]);
 
 	return (
 		<div className="w-full h-full">
