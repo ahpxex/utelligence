@@ -61,15 +61,31 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 		}
 
 		// Get actual data from store
-		const data = cleanedData?.rows || processedData?.rows || [];
-		console.log("[ML Tab] Data rows:", data.length);
-		console.log("[ML Tab] Data sample:", data[0]);
+		const rawData = cleanedData?.rows || processedData?.rows || [];
+		const headers = cleanedData?.headers || processedData?.headers || availableColumns;
 		
-		if (data.length === 0) {
+		console.log("[ML Tab] Data rows:", rawData.length);
+		console.log("[ML Tab] Headers:", headers);
+		console.log("[ML Tab] Raw data sample:", rawData[0]);
+		
+		if (rawData.length === 0) {
 			console.log("[ML Tab] No data available");
 			setError("没有可用的数据，请先上传文件");
 			return;
 		}
+		
+		// Convert array data to object format
+		// Data from store is in array format: [["Alice", 20, 85, ...], ...]
+		// We need to convert it to object format: [{Name: "Alice", Age: 20, ...}, ...]
+		const data = rawData.map((row: any) => {
+			const obj: Record<string, any> = {};
+			headers.forEach((header: string, index: number) => {
+				obj[header] = row[index];
+			});
+			return obj;
+		});
+		
+		console.log("[ML Tab] Converted data sample:", data[0]);
 
 		console.log("[ML Tab] Starting algorithm execution...");
 		setIsRunning(true);
@@ -86,7 +102,7 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 
 			// Run the algorithm
 			console.log("[ML Tab] Calling runAlgorithm...");
-			const result = await runAlgorithm(algorithmId, data as any, options);
+			const result = await runAlgorithm(algorithmId, data, options);
 			console.log("[ML Tab] Result:", result);
 			setResults(result);
 		} catch (err) {

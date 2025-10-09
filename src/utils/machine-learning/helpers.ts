@@ -9,6 +9,10 @@ export function prepareMLData(
 	featureColumns: string[],
 	labelColumn?: string,
 ): MLData {
+	console.log("[prepareMLData] Feature columns:", featureColumns);
+	console.log("[prepareMLData] Label column:", labelColumn);
+	console.log("[prepareMLData] Data sample:", data[0]);
+	
 	const features: number[][] = [];
 	const labels: (number | string)[] = [];
 
@@ -20,11 +24,22 @@ export function prepareMLData(
 		}
 		features.push(featureRow);
 
-		if (labelColumn && row[labelColumn] !== undefined) {
-			const label = row[labelColumn];
-			labels.push(typeof label === "number" ? label : String(label));
+		if (labelColumn) {
+			// Check if column exists in row
+			if (!(labelColumn in row)) {
+				console.warn(`[prepareMLData] Label column "${labelColumn}" not found in row:`, Object.keys(row));
+			} else if (row[labelColumn] === undefined || row[labelColumn] === null || row[labelColumn] === "") {
+				console.warn(`[prepareMLData] Label value is empty for column "${labelColumn}":`, row[labelColumn]);
+			} else {
+				const label = row[labelColumn];
+				labels.push(typeof label === "number" ? label : String(label));
+			}
 		}
 	}
+
+	console.log("[prepareMLData] Features count:", features.length);
+	console.log("[prepareMLData] Labels count:", labels.length);
+	console.log("[prepareMLData] Labels sample:", labels.slice(0, 3));
 
 	return {
 		features,
