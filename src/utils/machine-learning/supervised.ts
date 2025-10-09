@@ -1,4 +1,4 @@
-import GaussianNB from "ml-naivebayes";
+import { GaussianNB } from "ml-naivebayes";
 import KNN from "ml-knn";
 import { DecisionTreeClassifier, DecisionTreeRegression } from "ml-cart";
 import {

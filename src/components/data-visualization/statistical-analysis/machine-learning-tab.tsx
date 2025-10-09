@@ -8,10 +8,13 @@ import {
 	SelectValue,
 } from "@/components/ui/shadcn/select";
 import { Tabs, TabsContent } from "@/components/ui/shadcn/tabs";
+import { Alert, AlertDescription } from "@/components/ui/shadcn/alert";
 import { algorithms, categoryLabels } from "@/utils/machine-learning/algorithms";
-import { getMockResult } from "@/utils/machine-learning/mock-results";
-import { useState } from "react";
+import { runAlgorithm } from "@/utils/machine-learning/implementations";
+import { useUnifiedDataStore } from "@/store/unified-data-store";
+import { useState, useEffect } from "react";
 import { AlgorithmCard } from "./components/algorithm-card";
+import { AlgorithmParameters } from "./components/algorithm-parameters";
 import { ResultsRenderer } from "./components/results-renderer";
 
 interface MachineLearningTabProps {
@@ -24,6 +27,17 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 	const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>("");
 	const [isRunning, setIsRunning] = useState<boolean>(false);
 	const [results, setResults] = useState<any>(null);
+	const [parameters, setParameters] = useState<Record<string, any>>({});
+	const [error, setError] = useState<string | null>(null);
+
+	// Get actual data from store
+	const { processedData, cleanedData } = useUnifiedDataStore();
+
+	// Reset parameters when algorithm changes
+	useEffect(() => {
+		setParameters({});
+		setError(null);
+	}, [selectedAlgorithm]);
 
 	const categories = Object.keys(categoryLabels);
 	const filteredAlgorithms =
@@ -31,21 +45,40 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 			? algorithms
 			: algorithms.filter((alg) => alg.category === selectedCategory);
 
-	const runAlgorithm = async (algorithmId: string) => {
+	const selectedAlgorithmObj = algorithms.find(alg => alg.id === selectedAlgorithm);
+
+	const handleRunAlgorithm = async (algorithmId: string) => {
 		if (!file || availableColumns.length === 0) {
+			return;
+		}
+
+		// Get actual data
+		const data = cleanedData?.rows || processedData?.rows || [];
+		if (data.length === 0) {
+			setError("没有可用的数据，请先上传文件");
 			return;
 		}
 
 		setIsRunning(true);
 		setResults(null);
+		setError(null);
 
-		// Simulate processing time
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+		try {
+			// Prepare options with parameters
+			const options = {
+				featureColumns: availableColumns,
+				...parameters,
+			};
 
-		// Get mock result
-		const mockResult = getMockResult(algorithmId, availableColumns);
-		setResults(mockResult);
-		setIsRunning(false);
+			// Run the algorithm
+			const result = await runAlgorithm(algorithmId, data as any, options);
+			setResults(result);
+		} catch (err) {
+			console.error("算法执行错误:", err);
+			setError(err instanceof Error ? err.message : "算法执行失败");
+		} finally {
+			setIsRunning(false);
+		}
 	};
 
 	if (availableColumns.length === 0) {
@@ -59,7 +92,7 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 	return (
 		<div className="flex gap-6 h-[calc(100vh-300px)]">
 			{/* Left side - Algorithm cards */}
-			<div className="w-1/2 flex flex-col space-y-4">
+			<div className="w-1/2 flex flex-col space-y-4 overflow-hidden">
 				<div className="flex items-center justify-between">
 					<h3 className="text-lg font-medium">机器学习算法</h3>
 					<Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -77,8 +110,8 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 					</Select>
 				</div>
 
-				<Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="overflow-auto p-2 pr-6 flex flex-col">
-					<div>
+				<Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="flex-1 overflow-hidden flex flex-col">
+					<div className="flex-1 overflow-auto p-2 pr-6">
 						<TabsContent value="all" className="mt-0 h-full">
 							<div className="grid grid-cols-1 gap-3 h-fit">
 								{algorithms.map((algorithm) => (
@@ -89,7 +122,7 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 										isRunning={isRunning}
 										showCategory={true}
 										onSelect={() => setSelectedAlgorithm(algorithm.id)}
-										onRun={() => runAlgorithm(algorithm.id)}
+										onRun={() => handleRunAlgorithm(algorithm.id)}
 									/>
 								))}
 							</div>
@@ -108,7 +141,7 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 												isRunning={isRunning}
 												showCategory={false}
 												onSelect={() => setSelectedAlgorithm(algorithm.id)}
-												onRun={() => runAlgorithm(algorithm.id)}
+												onRun={() => handleRunAlgorithm(algorithm.id)}
 											/>
 										))}
 								</div>
@@ -116,13 +149,37 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 						))}
 					</div>
 				</Tabs>
+				
+				{/* Parameter configuration */}
+				{selectedAlgorithmObj && (
+					<AlgorithmParameters
+						algorithm={selectedAlgorithmObj}
+						availableColumns={availableColumns}
+						parameters={parameters}
+						onParametersChange={setParameters}
+					/>
+				)}
 			</div>
 
 			{/* Right side - Results */}
 			<div className="w-1/2 flex flex-col">
 				<h3 className="text-lg font-medium mb-4">分析结果</h3>
+				
+				{error && (
+					<Alert variant="destructive" className="mb-4">
+						<AlertDescription>{error}</AlertDescription>
+					</Alert>
+				)}
+				
 				<div className="flex-1 overflow-auto">
-					{selectedAlgorithm ? (
+					{isRunning ? (
+						<div className="h-full flex items-center justify-center">
+							<div className="text-center space-y-4">
+								<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+								<p className="text-muted-foreground">正在执行算法...</p>
+							</div>
+						</div>
+					) : selectedAlgorithm ? (
 						<ResultsRenderer
 							results={results}
 							selectedAlgorithm={selectedAlgorithm}
