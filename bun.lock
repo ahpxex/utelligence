@@ -49,6 +49,15 @@
         "llama3-tokenizer-js": "^1.1.3",
         "lodash": "^4.17.21",
         "lucide-react": "^0.487.0",
+        "ml-cart": "^2.1.1",
+        "ml-kmeans": "^6.0.0",
+        "ml-knn": "^3.0.0",
+        "ml-matrix": "^6.12.1",
+        "ml-naivebayes": "^4.0.0",
+        "ml-pca": "^4.1.1",
+        "ml-random-forest": "^2.1.0",
+        "ml-regression": "^6.3.0",
+        "ml-svm": "^2.1.2",
         "next": "^15.2.3",
         "next-themes": "^0.4.6",
         "papaparse": "^5.5.2",
@@ -695,6 +704,8 @@
 
     "character-reference-invalid": ["character-reference-invalid@1.1.4", "", {}, "sha512-mKKUkUbhPpQlCOfIuZkvSEgktjPFIsZKRRbC6KWVEMvlzblj3i3asQv5ODsrwt0N3pHAEvjP8KTQPHkp0+6jOg=="],
 
+    "cheminfo-types": ["cheminfo-types@1.8.1", "https://registry.npmmirror.com/cheminfo-types/-/cheminfo-types-1.8.1.tgz", {}, "sha512-FRcpVkox+cRovffgqNdDFQ1eUav+i/Vq/CUd1hcfEl2bevntFlzznL+jE8g4twl6ElB7gZjCko6pYpXyMn+6dA=="],
+
     "cjs-module-lexer": ["cjs-module-lexer@1.4.3", "", {}, "sha512-9z8TZaGM1pfswYeXrUpzPrkx8UnWYdhJclsiYMm6x/w5+nN+8Tf/LnAgfLGQCm59qAOxU8WwHEq2vNwF6i4j+Q=="],
 
     "class-variance-authority": ["class-variance-authority@0.7.1", "", { "dependencies": { "clsx": "^2.1.1" } }, "sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg=="],
@@ -899,6 +910,8 @@
 
     "is-alphanumerical": ["is-alphanumerical@1.0.4", "", { "dependencies": { "is-alphabetical": "^1.0.0", "is-decimal": "^1.0.0" } }, "sha512-UzoZUr+XfVz3t3v4KyGEniVL9BDRoQtY7tOyrRybkVNjDFWyo1yhXNGrrBTQxp3ib9BLAWs7k2YKBQsFRkZG9A=="],
 
+    "is-any-array": ["is-any-array@2.0.1", "https://registry.npmmirror.com/is-any-array/-/is-any-array-2.0.1.tgz", {}, "sha512-UtilS7hLRu++wb/WBAw9bNuP1Eg04Ivn1vERJck8zJthEvXCBEBpGR/33u/xLKWEQf95803oalHrVDptcAvFdQ=="],
+
     "is-arrayish": ["is-arrayish@0.3.2", "", {}, "sha512-eVRqCvVlZbuw3GrM63ovNSNAeA1K16kaR/LRY/92w0zxQ5/1YzwblUX652i4Xs9RwAGjW9d9y6X88t8OaAJfWQ=="],
 
     "is-core-module": ["is-core-module@2.16.1", "", { "dependencies": { "hasown": "^2.0.2" } }, "sha512-UfoeMA6fIJ8wTYFEUjelnaGI67v6+N7qXJEvQuIGa99l4xsCruSYOVSQ0uPANn4dAzm8lkYPaKLrrijLq7x23w=="],
@@ -1009,6 +1022,8 @@
 
     "media-typer": ["media-typer@1.1.0", "https://registry.npmmirror.com/media-typer/-/media-typer-1.1.0.tgz", {}, "sha512-aisnrDP4GNe06UcKFnV5bfMNPBUw4jsLGaWwWfnH3v02GnBuXX2MCVn5RbrWo0j3pczUilYblq7fQ7Nw2t5XKw=="],
 
+    "median-quickselect": ["median-quickselect@1.0.1", "https://registry.npmmirror.com/median-quickselect/-/median-quickselect-1.0.1.tgz", {}, "sha512-/QL9ptNuLsdA68qO+2o10TKCyu621zwwTFdLvtu8rzRNKsn8zvuGoq/vDxECPyELFG8wu+BpyoMR9BnsJqfVZQ=="],
+
     "merge-descriptors": ["merge-descriptors@1.0.3", "https://registry.npmmirror.com/merge-descriptors/-/merge-descriptors-1.0.3.tgz", {}, "sha512-gaNvAS7TZ897/rVaZ0nMtAyxNyi/pdbjbAwUpFQpN70GqnVfOiXpeUUMKRBmzXaSQ8DdTX4/0ms62r2K+hE6mQ=="],
 
     "methods": ["methods@1.1.2", "https://registry.npmmirror.com/methods/-/methods-1.1.2.tgz", {}, "sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w=="],
@@ -1076,6 +1091,72 @@
     "mime-types": ["mime-types@3.0.1", "https://registry.npmmirror.com/mime-types/-/mime-types-3.0.1.tgz", { "dependencies": { "mime-db": "^1.54.0" } }, "sha512-xRc4oEhT6eaBpU1XF7AjpOFD+xQmXNB5OVKwp4tqCuBpHLS/ZbBDrc07mYTDqVMg6PfxUjjNp85O6Cd2Z/5HWA=="],
 
     "minimist": ["minimist@1.2.8", "", {}, "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA=="],
+
+    "ml-array-max": ["ml-array-max@1.2.4", "https://registry.npmmirror.com/ml-array-max/-/ml-array-max-1.2.4.tgz", { "dependencies": { "is-any-array": "^2.0.0" } }, "sha512-BlEeg80jI0tW6WaPyGxf5Sa4sqvcyY6lbSn5Vcv44lp1I2GR6AWojfUvLnGTNsIXrZ8uqWmo8VcG1WpkI2ONMQ=="],
+
+    "ml-array-mean": ["ml-array-mean@1.1.6", "https://registry.npmmirror.com/ml-array-mean/-/ml-array-mean-1.1.6.tgz", { "dependencies": { "ml-array-sum": "^1.1.6" } }, "sha512-MIdf7Zc8HznwIisyiJGRH9tRigg3Yf4FldW8DxKxpCCv/g5CafTw0RRu51nojVEOXuCQC7DRVVu5c7XXO/5joQ=="],
+
+    "ml-array-median": ["ml-array-median@1.1.6", "https://registry.npmmirror.com/ml-array-median/-/ml-array-median-1.1.6.tgz", { "dependencies": { "is-any-array": "^2.0.0", "median-quickselect": "^1.0.1" } }, "sha512-V6bV6bTPFRX8v5CaAx/7fuRXC39LLTHfPSVZZafdNaqNz2PFL5zEA7gesjv8dMXh+gwPeUMtB5QPovlTBaa4sw=="],
+
+    "ml-array-min": ["ml-array-min@1.2.3", "https://registry.npmmirror.com/ml-array-min/-/ml-array-min-1.2.3.tgz", { "dependencies": { "is-any-array": "^2.0.0" } }, "sha512-VcZ5f3VZ1iihtrGvgfh/q0XlMobG6GQ8FsNyQXD3T+IlstDv85g8kfV0xUG1QPRO/t21aukaJowDzMTc7j5V6Q=="],
+
+    "ml-array-mode": ["ml-array-mode@1.1.5", "https://registry.npmmirror.com/ml-array-mode/-/ml-array-mode-1.1.5.tgz", { "dependencies": { "is-any-array": "^2.0.0" } }, "sha512-30dWTShQq05UzL+ZoG5OuuDvRl3APdz/bHwgZTgqRAJKOZApaWNQxg/ZnN5i/Uls3AjqabRZ70/QhX+/0bfZEA=="],
+
+    "ml-array-rescale": ["ml-array-rescale@1.3.7", "https://registry.npmmirror.com/ml-array-rescale/-/ml-array-rescale-1.3.7.tgz", { "dependencies": { "is-any-array": "^2.0.0", "ml-array-max": "^1.2.4", "ml-array-min": "^1.2.3" } }, "sha512-48NGChTouvEo9KBctDfHC3udWnQKNKEWN0ziELvY3KG25GR5cA8K8wNVzracsqSW1QEkAXjTNx+ycgAv06/1mQ=="],
+
+    "ml-array-sum": ["ml-array-sum@1.1.6", "https://registry.npmmirror.com/ml-array-sum/-/ml-array-sum-1.1.6.tgz", { "dependencies": { "is-any-array": "^2.0.0" } }, "sha512-29mAh2GwH7ZmiRnup4UyibQZB9+ZLyMShvt4cH4eTK+cL2oEMIZFnSyB3SS8MlsTh6q/w/yh48KmqLxmovN4Dw=="],
+
+    "ml-cart": ["ml-cart@2.1.1", "https://registry.npmmirror.com/ml-cart/-/ml-cart-2.1.1.tgz", { "dependencies": { "ml-array-mean": "^1.1.5", "ml-matrix": "^6.8.2" } }, "sha512-f6rIj4EzbjqKLJa2Qmm5AjZ0WVgk+Y7J1N/+pQVaFr0d4oM1uZPLOh5h665LyH+bLBHTFEbvSR4OLKmJRQ8KfA=="],
+
+    "ml-distance-euclidean": ["ml-distance-euclidean@2.0.0", "https://registry.npmmirror.com/ml-distance-euclidean/-/ml-distance-euclidean-2.0.0.tgz", {}, "sha512-yC9/2o8QF0A3m/0IXqCTXCzz2pNEzvmcE/9HFKOZGnTjatvBbsn4lWYJkxENkA4Ug2fnYl7PXQxnPi21sgMy/Q=="],
+
+    "ml-kernel": ["ml-kernel@3.0.0", "https://registry.npmmirror.com/ml-kernel/-/ml-kernel-3.0.0.tgz", { "dependencies": { "ml-distance-euclidean": "^2.0.0", "ml-kernel-gaussian": "^2.0.2", "ml-kernel-polynomial": "^2.0.1", "ml-kernel-sigmoid": "^1.0.1", "ml-matrix": "^6.1.2" } }, "sha512-R+ZR0Kl5xJ7vnxtlDqjZ26xVk7mAw7ctK4NlzRHviBFXxp7keC9+hWirMOdzi2DOQA0t6CaRwjElZ6SdirOmow=="],
+
+    "ml-kernel-gaussian": ["ml-kernel-gaussian@2.0.2", "https://registry.npmmirror.com/ml-kernel-gaussian/-/ml-kernel-gaussian-2.0.2.tgz", { "dependencies": { "ml-distance-euclidean": "^2.0.0" } }, "sha512-5MBrH2g9MBO53I6mcyXvMhyOLsmO2w21+26A1ZV/vYoxqpsov2PWkT8bhdFCEe0kgDupmAb6u81iOID/rhnarA=="],
+
+    "ml-kernel-polynomial": ["ml-kernel-polynomial@2.0.1", "https://registry.npmmirror.com/ml-kernel-polynomial/-/ml-kernel-polynomial-2.0.1.tgz", {}, "sha512-aGDNRPHDiKeJmBxB0L9wTxKNLfp5JytbdRIo5K+FTcmFjkWDe3YZPo6R6wBB5mxaJ5eqTRawzeV4RoIWHbakyQ=="],
+
+    "ml-kernel-sigmoid": ["ml-kernel-sigmoid@1.0.1", "https://registry.npmmirror.com/ml-kernel-sigmoid/-/ml-kernel-sigmoid-1.0.1.tgz", {}, "sha512-mSbYOSbNQ7GsUAGrHuUHNsLgM3bZGpXkotw/FBdKZD9YMXfVOgQb1LvvvVeSlOR/ZdmX23qqaV0RnKSYWBF8og=="],
+
+    "ml-kmeans": ["ml-kmeans@6.0.0", "https://registry.npmmirror.com/ml-kmeans/-/ml-kmeans-6.0.0.tgz", { "dependencies": { "ml-distance-euclidean": "^2.0.0", "ml-matrix": "^6.9.0", "ml-nearest-vector": "^2.0.1", "ml-random": "^0.5.0" } }, "sha512-aziEZqeHxczaDvo1qkfCrC7XNVAPevs6PigAzy7dp9TzeQI7oGan6NfCgADwL/FAlA/wWi+1DkV8da6pXfuuPg=="],
+
+    "ml-knn": ["ml-knn@3.0.0", "https://registry.npmmirror.com/ml-knn/-/ml-knn-3.0.0.tgz", { "dependencies": { "ml-distance-euclidean": "^2.0.0" } }, "sha512-w7Jig4vW09OYMurlIRRJj8yL2O/835QJpxup+yW7QVYXSjixmanPtPQL+weiTYbaB/wWX8JilB+Wllk4mxvP5w=="],
+
+    "ml-matrix": ["ml-matrix@6.12.1", "https://registry.npmmirror.com/ml-matrix/-/ml-matrix-6.12.1.tgz", { "dependencies": { "is-any-array": "^2.0.1", "ml-array-rescale": "^1.3.7" } }, "sha512-TJ+8eOFdp+INvzR4zAuwBQJznDUfktMtOB6g/hUcGh3rcyjxbz4Te57Pgri8Q9bhSQ7Zys4IYOGhFdnlgeB6Lw=="],
+
+    "ml-naivebayes": ["ml-naivebayes@4.0.0", "https://registry.npmmirror.com/ml-naivebayes/-/ml-naivebayes-4.0.0.tgz", { "dependencies": { "ml-matrix": "^6.1.2" } }, "sha512-JInn0MFvu9xJ8mCB8sef/UYs6IS9wH5DvPj0Jmft3vJj7vdBtXR4SH+EbcoJLLU0IO1NcvIaAHWLwD/hRda2+Q=="],
+
+    "ml-nearest-vector": ["ml-nearest-vector@2.0.1", "https://registry.npmmirror.com/ml-nearest-vector/-/ml-nearest-vector-2.0.1.tgz", { "dependencies": { "ml-distance-euclidean": "^2.0.0" } }, "sha512-gMPwNm3eed59ewJYiCK/+wElWBfNoD6JizH965ePiQgCo0pvQL63w4YdZhLs5eUV0iWcq6brVMUBL6iMySHnqg=="],
+
+    "ml-pca": ["ml-pca@4.1.1", "https://registry.npmmirror.com/ml-pca/-/ml-pca-4.1.1.tgz", { "dependencies": { "ml-matrix": "^6.8.0" } }, "sha512-HQwswMK1dObj+ppk3EPcQMR2djWK0Cri8mAFd2nITtXHkLfO4DBBsEtiCT5KiR+2e3hQjp+lI0UyqZpdf04AlQ=="],
+
+    "ml-random": ["ml-random@0.5.0", "https://registry.npmmirror.com/ml-random/-/ml-random-0.5.0.tgz", { "dependencies": { "ml-xsadd": "^2.0.0" } }, "sha512-zLJBmNb34LOz+vN6BD8l3aYm/VWYWbmAunrLMPs4dHf4gTl8BWlhil72j56HubPg86zrXioIs4qoHq7Topy6tw=="],
+
+    "ml-random-forest": ["ml-random-forest@2.1.0", "https://registry.npmmirror.com/ml-random-forest/-/ml-random-forest-2.1.0.tgz", { "dependencies": { "ml-array-mean": "^1.1.5", "ml-array-median": "^1.1.5", "ml-array-mode": "^1.1.4", "ml-cart": "^2.1.1", "ml-matrix": "^6.8.2", "random-js": "^2.1.0" } }, "sha512-5PpfMFWdCxchjte7N6W38XNqycbheOadrfKySV0mojAfKorXy1HnPLthz3NFDnSO4nnIOaxRtr26bc4ZQaautA=="],
+
+    "ml-regression": ["ml-regression@6.3.0", "https://registry.npmmirror.com/ml-regression/-/ml-regression-6.3.0.tgz", { "dependencies": { "ml-kernel": "^3.0.0", "ml-matrix": "^6.12.1", "ml-regression-base": "^4.0.0", "ml-regression-exponential": "^3.0.2", "ml-regression-multivariate-linear": "^2.0.4", "ml-regression-polynomial": "^3.0.1", "ml-regression-power": "^3.0.0", "ml-regression-robust-polynomial": "^3.0.2", "ml-regression-simple-linear": "^3.0.1", "ml-regression-theil-sen": "^3.0.0" } }, "sha512-+El9r2R80+KMsRabc9gdT/vNO9mt5jWeNEpZ+iEOtdkKWIsnC1fBgRHlDwxUEpfpb3rpsBG6WLs6lMOiihffiw=="],
+
+    "ml-regression-base": ["ml-regression-base@4.0.0", "https://registry.npmmirror.com/ml-regression-base/-/ml-regression-base-4.0.0.tgz", { "dependencies": { "cheminfo-types": "^1.7.3", "is-any-array": "^2.0.1" } }, "sha512-V2VjB+K/BcgXaX450xvYw36TLOB+piD9G1pHU3VE+ggQUApsVGkYco6UMQykFOwBydHnDTbOiybH/lwrkqFT4g=="],
+
+    "ml-regression-exponential": ["ml-regression-exponential@3.0.2", "https://registry.npmmirror.com/ml-regression-exponential/-/ml-regression-exponential-3.0.2.tgz", { "dependencies": { "ml-regression-base": "^4.0.0", "ml-regression-simple-linear": "^3.0.0" } }, "sha512-drV4ZSGKMMVNETVa7+/z15Uq9C0F69wNsJbhPvVbERgYRSmoGg+e0X7BYK75TzUvFY8IlYZmvVQOZK334slpbQ=="],
+
+    "ml-regression-multivariate-linear": ["ml-regression-multivariate-linear@2.0.4", "https://registry.npmmirror.com/ml-regression-multivariate-linear/-/ml-regression-multivariate-linear-2.0.4.tgz", { "dependencies": { "ml-matrix": "^6.10.1" } }, "sha512-/vShPAlP+mB7P2mC5TuXwObSJNl/UBI71/bszt9ilTg6yLKy6btDLpAYyJNa6t+JnL5a7q+Yy4dCltfpvqXRIw=="],
+
+    "ml-regression-polynomial": ["ml-regression-polynomial@3.0.2", "https://registry.npmmirror.com/ml-regression-polynomial/-/ml-regression-polynomial-3.0.2.tgz", { "dependencies": { "ml-matrix": "^6.12.0", "ml-regression-base": "^4.0.0" } }, "sha512-RkHQeviEi7q6d2npCeH9MiRTPsBBqqSeqiWV3yctTFXvYgavy5MkpnCqGElHDb62Y3cTXlNQpmD4T7LA7yfGvw=="],
+
+    "ml-regression-power": ["ml-regression-power@3.0.0", "https://registry.npmmirror.com/ml-regression-power/-/ml-regression-power-3.0.0.tgz", { "dependencies": { "ml-regression-base": "^4.0.0", "ml-regression-simple-linear": "^3.0.0" } }, "sha512-RLCKGVHQy7EdvqjjQfDxQmsk9ZSfAtYBI9cNp62J3gl1a1ZuaCKARSQLd/vgh11ZQCjmUbkjvDwmrhJoi1r5uA=="],
+
+    "ml-regression-robust-polynomial": ["ml-regression-robust-polynomial@3.0.2", "https://registry.npmmirror.com/ml-regression-robust-polynomial/-/ml-regression-robust-polynomial-3.0.2.tgz", { "dependencies": { "is-any-array": "^2.0.1", "ml-matrix": "^6.12.0", "ml-regression-base": "^4.0.0" } }, "sha512-GVaF1Qa5h6n8URUVpBl70oG/CNhUrdcgEy9Apu665KTU7r+FuuC9MMNKjkpCIUgQ3TG0tRRgfHJ427hkEQ99bA=="],
+
+    "ml-regression-simple-linear": ["ml-regression-simple-linear@3.0.1", "https://registry.npmmirror.com/ml-regression-simple-linear/-/ml-regression-simple-linear-3.0.1.tgz", { "dependencies": { "cheminfo-types": "^1.7.3", "ml-regression-base": "^4.0.0" } }, "sha512-SF2oxA+034Co9GVQSFuS3vtACaRAFrEwHi9oX6VTaSY/KtXxseL3d4GApj4jWXMoAgrP7VMoIO1PH0RoZaMR1g=="],
+
+    "ml-regression-theil-sen": ["ml-regression-theil-sen@3.0.0", "https://registry.npmmirror.com/ml-regression-theil-sen/-/ml-regression-theil-sen-3.0.0.tgz", { "dependencies": { "ml-array-median": "^1.1.6", "ml-regression-base": "^4.0.0" } }, "sha512-oRI4m/BU71Bp5nyG1REovS0/OCEDoBc+a/9yJR//toiCpu29mFe51sKT5HOyEXdrx8jGPDC4Xnf24TMvfvsxRw=="],
+
+    "ml-stat": ["ml-stat@1.3.3", "https://registry.npmmirror.com/ml-stat/-/ml-stat-1.3.3.tgz", {}, "sha512-F6plydFIKFZA+7j/pRsRrfRu4nwsruQvYD9QxHWc4hFUdASVznsKUL2hgAwgMVizY/P0+b1L9bVQexKES5y/uw=="],
+
+    "ml-svm": ["ml-svm@2.1.2", "https://registry.npmmirror.com/ml-svm/-/ml-svm-2.1.2.tgz", { "dependencies": { "ml-kernel": "^2.2.0", "ml-stat": "^1.2.0" } }, "sha512-5en8BpWkEkno7WE+pAd3gmDRrQVQISrcmD2v2He5T54jsX4G71EcXWQoKtRyus30RV0CtlLagXpZpSJs/wnMbg=="],
+
+    "ml-xsadd": ["ml-xsadd@2.0.0", "https://registry.npmmirror.com/ml-xsadd/-/ml-xsadd-2.0.0.tgz", {}, "sha512-VoAYUqmPRmzKbbqRejjqceGFp3VF81Qe8XXFGU0UXLxB7Mf4GGvyGq5Qn3k4AiQgDEV6WzobqlPOd+j0+m6IrA=="],
 
     "module-details-from-path": ["module-details-from-path@1.0.3", "", {}, "sha512-ySViT69/76t8VhE1xXHK6Ch4NcDd26gx0MzKXLO+F7NOtnqH68d9zF94nT8ZWSxXh8ELOERsnJO/sWt1xZYw5A=="],
 
@@ -1164,6 +1245,8 @@
     "radash": ["radash@12.1.1", "https://registry.npmmirror.com/radash/-/radash-12.1.1.tgz", {}, "sha512-h36JMxKRqrAxVD8201FrCpyeNuUY9Y5zZwujr20fFO77tpUtGa6EZzfKw/3WaiBX95fq7+MpsuMLNdSnORAwSA=="],
 
     "radix-ui": ["radix-ui@1.1.3", "", { "dependencies": { "@radix-ui/primitive": "1.1.1", "@radix-ui/react-accessible-icon": "1.1.2", "@radix-ui/react-accordion": "1.2.3", "@radix-ui/react-alert-dialog": "1.1.6", "@radix-ui/react-aspect-ratio": "1.1.2", "@radix-ui/react-avatar": "1.1.3", "@radix-ui/react-checkbox": "1.1.4", "@radix-ui/react-collapsible": "1.1.3", "@radix-ui/react-collection": "1.1.2", "@radix-ui/react-compose-refs": "1.1.1", "@radix-ui/react-context": "1.1.1", "@radix-ui/react-context-menu": "2.2.6", "@radix-ui/react-dialog": "1.1.6", "@radix-ui/react-direction": "1.1.0", "@radix-ui/react-dismissable-layer": "1.1.5", "@radix-ui/react-dropdown-menu": "2.1.6", "@radix-ui/react-focus-guards": "1.1.1", "@radix-ui/react-focus-scope": "1.1.2", "@radix-ui/react-form": "0.1.2", "@radix-ui/react-hover-card": "1.1.6", "@radix-ui/react-label": "2.1.2", "@radix-ui/react-menu": "2.1.6", "@radix-ui/react-menubar": "1.1.6", "@radix-ui/react-navigation-menu": "1.2.5", "@radix-ui/react-popover": "1.1.6", "@radix-ui/react-popper": "1.2.2", "@radix-ui/react-portal": "1.1.4", "@radix-ui/react-presence": "1.1.2", "@radix-ui/react-primitive": "2.0.2", "@radix-ui/react-progress": "1.1.2", "@radix-ui/react-radio-group": "1.2.3", "@radix-ui/react-roving-focus": "1.1.2", "@radix-ui/react-scroll-area": "1.2.3", "@radix-ui/react-select": "2.1.6", "@radix-ui/react-separator": "1.1.2", "@radix-ui/react-slider": "1.2.3", "@radix-ui/react-slot": "1.1.2", "@radix-ui/react-switch": "1.1.3", "@radix-ui/react-tabs": "1.1.3", "@radix-ui/react-toast": "1.2.6", "@radix-ui/react-toggle": "1.1.2", "@radix-ui/react-toggle-group": "1.1.2", "@radix-ui/react-toolbar": "1.1.2", "@radix-ui/react-tooltip": "1.1.8", "@radix-ui/react-use-callback-ref": "1.1.0", "@radix-ui/react-use-controllable-state": "1.1.0", "@radix-ui/react-use-escape-keydown": "1.1.0", "@radix-ui/react-use-layout-effect": "1.1.0", "@radix-ui/react-use-size": "1.1.0", "@radix-ui/react-visually-hidden": "1.1.2" }, "peerDependencies": { "@types/react": "*", "@types/react-dom": "*", "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc" }, "optionalPeers": ["@types/react", "@types/react-dom"] }, "sha512-W8L6soM1vQnIXVvVa31AkQhoZBDPwVoNHhT13R3aB9Qq7ARYIUS9DLaCopRBsbTdZm1NEEPx3rnq659CiNOBDw=="],
+
+    "random-js": ["random-js@2.1.0", "https://registry.npmmirror.com/random-js/-/random-js-2.1.0.tgz", {}, "sha512-CRUyWmnzmZBA7RZSVGq0xMqmgCyPPxbiKNLFA5ud7KenojVX2s7Gv+V7eB52beKTPGxWRnVZ7D/tCIgYJJ8vNQ=="],
 
     "range-parser": ["range-parser@1.2.1", "https://registry.npmmirror.com/range-parser/-/range-parser-1.2.1.tgz", {}, "sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg=="],
 
@@ -1581,6 +1664,8 @@
 
     "mdast-util-mdx-jsx/parse-entities": ["parse-entities@4.0.2", "", { "dependencies": { "@types/unist": "^2.0.0", "character-entities-legacy": "^3.0.0", "character-reference-invalid": "^2.0.0", "decode-named-character-reference": "^1.0.0", "is-alphanumerical": "^2.0.0", "is-decimal": "^2.0.0", "is-hexadecimal": "^2.0.0" } }, "sha512-GG2AQYWoLgL877gQIKeRPGO1xF9+eG1ujIb5soS5gPvLQ1y2o8FL90w2QWNdf9I361Mpp7726c+lj3U0qK1uGw=="],
 
+    "ml-svm/ml-kernel": ["ml-kernel@2.3.4", "https://registry.npmmirror.com/ml-kernel/-/ml-kernel-2.3.4.tgz", { "dependencies": { "ml-distance-euclidean": "^1.0.0", "ml-kernel-gaussian": "^2.0.1", "ml-kernel-polynomial": "^2.0.0", "ml-kernel-sigmoid": "^1.0.0", "ml-matrix": "^5.0.0" } }, "sha512-XH841rI/FANQD1JbhJuSy2XpXmstDjTRoYqJTQRq3V+sZmphvOKIJx1bWTr2vCxduDcWV/M77AYPZRivqt5QTA=="],
+
     "next/postcss": ["postcss@8.4.31", "", { "dependencies": { "nanoid": "^3.3.6", "picocolors": "^1.0.0", "source-map-js": "^1.0.2" } }, "sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ=="],
 
     "radix-ui/@radix-ui/react-toast": ["@radix-ui/react-toast@1.2.6", "", { "dependencies": { "@radix-ui/primitive": "1.1.1", "@radix-ui/react-collection": "1.1.2", "@radix-ui/react-compose-refs": "1.1.1", "@radix-ui/react-context": "1.1.1", "@radix-ui/react-dismissable-layer": "1.1.5", "@radix-ui/react-portal": "1.1.4", "@radix-ui/react-presence": "1.1.2", "@radix-ui/react-primitive": "2.0.2", "@radix-ui/react-use-callback-ref": "1.1.0", "@radix-ui/react-use-controllable-state": "1.1.0", "@radix-ui/react-use-layout-effect": "1.1.0", "@radix-ui/react-visually-hidden": "1.1.2" }, "peerDependencies": { "@types/react": "*", "@types/react-dom": "*", "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc" }, "optionalPeers": ["@types/react", "@types/react-dom"] }, "sha512-gN4dpuIVKEgpLn1z5FhzT9mYRUitbfZq9XqN/7kkBMUgFTzTG8x/KszWJugJXHcwxckY8xcKDZPz7kG3o6DsUA=="],
@@ -1666,6 +1751,10 @@
     "mdast-util-mdx-jsx/parse-entities/is-decimal": ["is-decimal@2.0.1", "", {}, "sha512-AAB9hiomQs5DXWcRB1rqsxGUstbRroFOPPVAomNk/3XHR5JyEZChOyTWe2oayKnsSsr/kcGqF+z6yuH6HHpN0A=="],
 
     "mdast-util-mdx-jsx/parse-entities/is-hexadecimal": ["is-hexadecimal@2.0.1", "", {}, "sha512-DgZQp241c8oO6cA1SbTEWiXeoxV42vlcJxgH+B3hi1AiqqKruZR3ZGF8In3fj4+/y/7rHvlOZLZtgJ/4ttYGZg=="],
+
+    "ml-svm/ml-kernel/ml-distance-euclidean": ["ml-distance-euclidean@1.0.0", "https://registry.npmmirror.com/ml-distance-euclidean/-/ml-distance-euclidean-1.0.0.tgz", {}, "sha512-/AwJjukaRjk3vsox2CMOrfgdZ1isZc6tJuEyMe5c66ZU0u/93upZQEUR5ZKNNaKShxoP9b5cIXUKPuztkQyHoQ=="],
+
+    "ml-svm/ml-kernel/ml-matrix": ["ml-matrix@5.3.0", "https://registry.npmmirror.com/ml-matrix/-/ml-matrix-5.3.0.tgz", { "dependencies": { "ml-array-max": "^1.1.1", "ml-array-rescale": "^1.2.1" } }, "sha512-DuvdXYwfGRpM+7MVdvi/zSjiazn+8QPrACT3Xi0pQpYx5SXZ1WuFYwUDXTSmV9+hrCxRhrC4hrzesNcfjpvOsw=="],
 
     "send/debug/ms": ["ms@2.0.0", "https://registry.npmmirror.com/ms/-/ms-2.0.0.tgz", {}, "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A=="],
 
