@@ -54,10 +54,18 @@ export async function runAlgorithm(
 		[key: string]: any;
 	} = {},
 ): Promise<MLResult> {
-	// 提取数值列
+	// 提取数值列 - 检查是否是数字或可以转换为数字
 	const numericColumns =
 		options.featureColumns ||
-		Object.keys(data[0]).filter((key) => typeof data[0][key] === "number");
+		Object.keys(data[0]).filter((key) => {
+			const value = data[0][key];
+			return typeof value === "number" || !Number.isNaN(Number.parseFloat(value));
+		});
+	
+	console.log("[ML Debug] Algorithm:", algorithmId);
+	console.log("[ML Debug] Data rows:", data.length);
+	console.log("[ML Debug] Numeric columns:", numericColumns);
+	console.log("[ML Debug] Options:", options);
 
 	// 根据算法类型执行不同的逻辑
 	switch (algorithmId) {

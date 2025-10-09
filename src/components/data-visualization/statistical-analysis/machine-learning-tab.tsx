@@ -48,17 +48,30 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 	const selectedAlgorithmObj = algorithms.find(alg => alg.id === selectedAlgorithm);
 
 	const handleRunAlgorithm = async (algorithmId: string) => {
-		if (!file || availableColumns.length === 0) {
+		console.log("[ML Tab] handleRunAlgorithm called with:", algorithmId);
+		console.log("[ML Tab] availableColumns:", availableColumns);
+		console.log("[ML Tab] processedData:", processedData);
+		console.log("[ML Tab] cleanedData:", cleanedData);
+		
+		// Check if we have columns
+		if (availableColumns.length === 0) {
+			console.log("[ML Tab] Early return: no columns");
+			setError("没有可用的列信息");
 			return;
 		}
 
-		// Get actual data
+		// Get actual data from store
 		const data = cleanedData?.rows || processedData?.rows || [];
+		console.log("[ML Tab] Data rows:", data.length);
+		console.log("[ML Tab] Data sample:", data[0]);
+		
 		if (data.length === 0) {
+			console.log("[ML Tab] No data available");
 			setError("没有可用的数据，请先上传文件");
 			return;
 		}
 
+		console.log("[ML Tab] Starting algorithm execution...");
 		setIsRunning(true);
 		setResults(null);
 		setError(null);
@@ -69,14 +82,18 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 				featureColumns: availableColumns,
 				...parameters,
 			};
+			console.log("[ML Tab] Options:", options);
 
 			// Run the algorithm
+			console.log("[ML Tab] Calling runAlgorithm...");
 			const result = await runAlgorithm(algorithmId, data as any, options);
+			console.log("[ML Tab] Result:", result);
 			setResults(result);
 		} catch (err) {
-			console.error("算法执行错误:", err);
+			console.error("[ML Tab] 算法执行错误:", err);
 			setError(err instanceof Error ? err.message : "算法执行失败");
 		} finally {
+			console.log("[ML Tab] Algorithm execution finished");
 			setIsRunning(false);
 		}
 	};
@@ -149,19 +166,9 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 						))}
 					</div>
 				</Tabs>
-				
-				{/* Parameter configuration */}
-				{selectedAlgorithmObj && (
-					<AlgorithmParameters
-						algorithm={selectedAlgorithmObj}
-						availableColumns={availableColumns}
-						parameters={parameters}
-						onParametersChange={setParameters}
-					/>
-				)}
 			</div>
 
-			{/* Right side - Results */}
+			{/* Right side - Results and Parameters */}
 			<div className="w-1/2 flex flex-col">
 				<h3 className="text-lg font-medium mb-4">分析结果</h3>
 				
@@ -180,11 +187,23 @@ export function MachineLearningTab({ availableColumns, file }: MachineLearningTa
 							</div>
 						</div>
 					) : selectedAlgorithm ? (
-						<ResultsRenderer
-							results={results}
-							selectedAlgorithm={selectedAlgorithm}
-							algorithms={algorithms}
-						/>
+						<div className="space-y-4">
+							{/* Parameter configuration inside results area */}
+							{selectedAlgorithmObj && (
+								<AlgorithmParameters
+									algorithm={selectedAlgorithmObj}
+									availableColumns={availableColumns}
+									parameters={parameters}
+									onParametersChange={setParameters}
+								/>
+							)}
+							
+							<ResultsRenderer
+								results={results}
+								selectedAlgorithm={selectedAlgorithm}
+								algorithms={algorithms}
+							/>
+						</div>
 					) : (
 						<div className="h-full">
 							<div className="h-full flex items-center justify-center">
