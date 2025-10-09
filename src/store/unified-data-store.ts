@@ -1,7 +1,6 @@
 import type { ColumnVisualizableConfig } from "@/types/visualization";
-import type { FileData } from "@/utils/data/data-processing";
+import { analyzeColumnData, type FileData } from "@/utils/data/data-processing";
 import { processFile } from "@/utils/data/file-upload/upload-utils";
-import { processAndAnalyzeFileData } from "@/utils/data/visualization/data-visualization-helpers";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { visualizationChartStore } from "./visualization-chart-store";
@@ -240,27 +239,35 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 				return profileId;
 			},
 
-			switchProfile: (profileId) => {
-				const { profiles } = get();
-				const profile = profiles.get(profileId);
-				if (profile) {
-					set({
-						activeProfileId: profileId,
-						// Sync derived state
-						currentFile: profile.file,
-						currentFileIdentifier: profile.fileIdentifier,
-						rawData: profile.rawData,
-						processedData: profile.processedData,
-						cleanedData: profile.cleanedData,
-						columnAnalysis: profile.columnAnalysis,
-						duplicates: profile.duplicates,
-						outliers: profile.outliers,
+		switchProfile: (profileId) => {
+			const { profiles } = get();
+			const profile = profiles.get(profileId);
+			if (profile) {
+				set({
+					activeProfileId: profileId,
+					// Sync derived state
+					currentFile: profile.file,
+					currentFileIdentifier: profile.fileIdentifier,
+					rawData: profile.rawData,
+					processedData: profile.processedData,
+					cleanedData: profile.cleanedData,
+					columnAnalysis: profile.columnAnalysis,
+					duplicates: profile.duplicates,
+					outliers: profile.outliers,
+				});
+				// Update visualization chart store with complete file context
+				if (profile.fileIdentifier && profile.processedData?.headers && profile.columnAnalysis.length > 0) {
+					visualizationChartStore.getState().initializeFileContext({
+						identifier: profile.fileIdentifier,
+						columns: profile.processedData.headers,
+						columnStatus: profile.columnAnalysis,
 					});
-					if (profile.fileIdentifier) {
-						visualizationChartStore.getState().setCurrentFileIdentifier(profile.fileIdentifier);
-					}
+				} else if (profile.fileIdentifier) {
+					// Fallback for profiles without processed data
+					visualizationChartStore.getState().setCurrentFileIdentifier(profile.fileIdentifier);
 				}
-			},
+			}
+		},
 
 			deleteProfile: (profileId) => {
 				set((state) => {
@@ -349,21 +356,55 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 				visualizationChartStore.getState().setCurrentFileIdentifier(fileKey);
 
 				try {
+					// Parse the file
 					const result = await processFile(file);
 
-					// Update the active profile with parsed data
+					// Analyze columns for visualization
+					const columnsVisualizableStatus: ColumnVisualizableConfig[] = [];
+					const processedData = { headers: result.headers, rows: result.rows as unknown as FileData };
+
+					for (const colName of result.headers) {
+						const colIndex = result.headers.indexOf(colName);
+						if (colIndex === -1) continue;
+						const columnData = result.rows.map((row) => row[colIndex]);
+						const analysis = analyzeColumnData(columnData, colName);
+						columnsVisualizableStatus.push({
+							column: colName,
+							isVisualizable: (analysis.isCategorical || analysis.isNumeric) && analysis.isValidForVisualization,
+							uniqueValues: analysis.uniqueValues,
+							totalValues: analysis.totalValues,
+							reason: !analysis.isValidForVisualization
+								? analysis.uniqueValues <= 1
+									? "数据值单一或过少"
+									: "唯一值占比过高，可能为ID列"
+								: undefined,
+						});
+					}
+
+					// Update the active profile with parsed data and analysis
 					set((state) => {
 						const newProfiles = new Map(state.profiles);
 						const currentProfile = newProfiles.get(profileId);
 						if (currentProfile) {
 							currentProfile.rawData = result;
+							currentProfile.processedData = processedData;
+							currentProfile.columnAnalysis = columnsVisualizableStatus;
 						}
 						return {
 							profiles: newProfiles,
 							isLoading: false,
 							// Sync derived state
 							rawData: result,
+							processedData: processedData,
+							columnAnalysis: columnsVisualizableStatus,
 						};
+					});
+
+					// Initialize visualization chart store
+					visualizationChartStore.getState().initializeFileContext({
+						identifier: fileKey,
+						columns: result.headers,
+						columnStatus: columnsVisualizableStatus,
 					});
 
 					// Sync with backend if needed
@@ -442,24 +483,49 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 				set({ isLoading: true, error: null });
 
 				try {
-					const { rawData, columnsVisualizableStatus } = await processAndAnalyzeFileData(
-						currentProfile.file,
-						columnsToAnalyze
-					);
+					// Parse the file if not already done
+					let result = currentProfile.rawData;
+					if (!result) {
+						result = await processFile(currentProfile.file!);
+					}
+
+					// Analyze columns for visualization
+					const columnsToProcess = columnsToAnalyze.length > 0 ? columnsToAnalyze : result.headers;
+					const columnsVisualizableStatus: ColumnVisualizableConfig[] = [];
+
+					for (const colName of columnsToProcess) {
+						const colIndex = result.headers.indexOf(colName);
+						if (colIndex === -1) continue;
+						const columnData = result.rows.map((row) => row[colIndex]);
+						const analysis = analyzeColumnData(columnData, colName);
+						columnsVisualizableStatus.push({
+							column: colName,
+							isVisualizable: (analysis.isCategorical || analysis.isNumeric) && analysis.isValidForVisualization,
+							uniqueValues: analysis.uniqueValues,
+							totalValues: analysis.totalValues,
+							reason: !analysis.isValidForVisualization
+								? analysis.uniqueValues <= 1
+									? "数据值单一或过少"
+									: "唯一值占比过高，可能为ID列"
+								: undefined,
+						});
+					}
+
+					const processedData = { headers: result.headers, rows: result.rows as unknown as FileData };
 
 					// Update active profile
 					set((state) => {
 						const newProfiles = new Map(state.profiles);
 						const profile = newProfiles.get(activeProfileId!);
 						if (profile) {
-							profile.processedData = rawData;
+							profile.processedData = processedData;
 							profile.columnAnalysis = columnsVisualizableStatus;
 						}
 						return {
 							profiles: newProfiles,
 							isLoading: false,
 							// Sync derived state
-							processedData: rawData,
+							processedData: processedData,
 							columnAnalysis: columnsVisualizableStatus,
 						};
 					});
@@ -468,7 +534,7 @@ export const useUnifiedDataStore = create<UnifiedDataState>()(
 					if (fileIdentifier) {
 						visualizationChartStore.getState().initializeFileContext({
 							identifier: fileIdentifier,
-							columns: rawData.headers,
+							columns: result.headers,
 							columnStatus: columnsVisualizableStatus,
 						});
 					}
