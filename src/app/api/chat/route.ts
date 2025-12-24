@@ -50,13 +50,17 @@ export async function POST(req: Request) {
     const agentWithCustomPrompt = new Agent({
       name: "Data Visualization Agent",
       instructions: systemPrompt || "You are a helpful assistant specialized in data visualization and analysis.",
-      model: customProvider.chat(process.env.MODEL ?? "gpt-4o"),
+      model: {
+        id: `openai/${process.env.MODEL ?? "gpt-4o"}` as `${string}/${string}`,
+        url: process.env.URL,
+        apiKey: process.env.API_KEY,
+      },
       tools: {
         visualization: visualization,
       },
     });
 
-    const stream = await agentWithCustomPrompt.streamVNext(messages);
+    const stream = await agentWithCustomPrompt.stream(messages);
 
     // Convert string stream to Uint8Array stream for Response compatibility
     const textEncoder = new TextEncoder();
